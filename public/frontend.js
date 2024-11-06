@@ -2,16 +2,17 @@
 let cart = [];
 
 document.addEventListener('DOMContentLoaded', () => {
-    fetchMenu();
+    fetchMenu(); // Fetch menu items when the page is loaded
 });
 
-// Fetch menu items from the server
+// Fetch menu items from the server and display them
 async function fetchMenu() {
     try {
         const response = await fetch('/menu');
         const menuItems = await response.json();
         const menuContainer = document.getElementById('menu-container');
         
+        // Create and display a card for each menu item
         menuItems.forEach(item => {
             const card = createCard(item);
             menuContainer.appendChild(card);
@@ -21,7 +22,7 @@ async function fetchMenu() {
     }
 }
 
-// Create individual card for each menu item
+// Create an individual card for each menu item
 function createCard(item) {
     const card = document.createElement('div');
     card.className = 'card';
@@ -52,14 +53,14 @@ function createCard(item) {
     return card;
 }
 
-// Add item to cart and alert the item added
+// Add an item to the cart (with a default quantity of 1)
 function addToCart(item) {
-    cart.push(item);
+    cart.push({ ...item, quantity: 1 });
     alert(`${item.Item_Name} has been added to your cart!`);
 }
 
-// Handle place order button click (global button)
-function placeOrder() {
+// Handle the global place order button click (top-right)
+async function placeOrder() {
     if (cart.length === 0) {
         alert('Your cart is empty!');
         return;
@@ -68,24 +69,34 @@ function placeOrder() {
     const deliveryAddress = prompt('Please enter your delivery address:');
     
     if (deliveryAddress) {
-        let totalAmount = 0;
-        let orderDetails = '';
-
-        cart.forEach(item => {
-            totalAmount += item.Item_Price;
-            orderDetails += `\nID: ${item.Item_ID}, Name: ${item.Item_Name}, Price: ₹ ${item.Item_Price}`;
+        // Send the cart data and delivery address to the backend
+        const response = await fetch('/place-order', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                cart: cart,
+                address: deliveryAddress
+            })
         });
 
-        alert(`Order placed!\n\nItems:\n${orderDetails}\nTotal Amount: ₹ ${totalAmount}\nDelivery Address: ${deliveryAddress}`);
+        const result = await response.json();
         
-        // Clear the cart after placing the order
-        cart = [];
+        if (response.status === 200) {
+            alert('Order placed successfully!');
+            console.log('Ordered Items:', cart);
+            console.log('Total Amount:', cart.reduce((total, item) => total + (item.Item_Price * item.quantity), 0));
+            cart = []; // Clear the cart after a successful order
+        } else {
+            alert(`Error: ${result.error}`);
+        }
     } else {
         alert('Delivery address is required to place the order!');
     }
 }
 
-// Create global place order button (top-right)
+// Create a global "Place Order" button (top-right of the page)
 function createGlobalPlaceOrderButton() {
     const placeOrderButton = document.createElement('button');
     placeOrderButton.textContent = 'Place Order';
@@ -95,5 +106,5 @@ function createGlobalPlaceOrderButton() {
     document.body.appendChild(placeOrderButton);
 }
 
-// Call this function once DOM is loaded to place the button at the top-right
+// Initialize the global place order button
 createGlobalPlaceOrderButton();
