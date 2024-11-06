@@ -79,4 +79,12 @@ body {
 .global-place-order:hover {
     background-color: #2ecc71;
 }
-    
+
+.card input[type="number"] {
+    width: 50%; /* Reduce the width of the input to 50% */
+    margin-bottom: 10px; /* Add bottom margin for spacing */
+    padding: 5px; /* Add some padding for better aesthetics */
+    font-size: 14px; /* Adjust font size if needed */
+    border: 1px solid #ccc; /* Add a border for better visibility */
+    border-radius: 4px; /* Optional: Rounded corners */
+}

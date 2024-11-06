@@ -40,23 +40,39 @@ function createCard(item) {
     itemPrice.className = 'price';
     itemPrice.textContent = `₹ ${item.Item_Price}`;
 
+    // Create quantity input field
+    const quantityLabel = document.createElement('label');
+    quantityLabel.textContent = 'Quantity:';
+    const quantityInput = document.createElement('input');
+    quantityInput.type = 'number';
+    quantityInput.value = 0; // Default value is 0
+    quantityInput.min = 0; // Ensure no negative quantities
+    quantityInput.id = `quantity-${item.Item_ID}`;
+
     const addToCartButton = document.createElement('button');
     addToCartButton.textContent = 'Add to Cart';
-    addToCartButton.onclick = () => addToCart(item);
+    addToCartButton.onclick = () => addToCart(item, quantityInput);
 
     card.appendChild(itemName);
     card.appendChild(itemType);
     card.appendChild(itemDescription);
     card.appendChild(itemPrice);
+    card.appendChild(quantityLabel);
+    card.appendChild(quantityInput);
     card.appendChild(addToCartButton);
 
     return card;
 }
 
-// Add an item to the cart (with a default quantity of 1)
-function addToCart(item) {
-    cart.push({ ...item, quantity: 1 });
-    alert(`${item.Item_Name} has been added to your cart!`);
+// Add an item to the cart with the selected quantity
+function addToCart(item, quantityInput) {
+    const quantity = parseInt(quantityInput.value, 10); // Get the quantity from the input field
+    if (quantity > 0) { // Only add to the cart if quantity is greater than 0
+        cart.push({ ...item, quantity: quantity });
+        alert(`${item.Item_Name} (x${quantity}) has been added to your cart!`);
+    } else {
+        alert('Please select a quantity greater than 0.');
+    }
 }
 
 // Handle the global place order button click (top-right)

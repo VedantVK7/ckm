@@ -52,7 +52,7 @@ app.post('/place-order', async (req, res) => {
         );
         const orderId = orderResult.insertId; // Get the generated Order_ID
 
-        // Insert items into the 'ordered_items' table
+        // Insert items into the 'ordered_items' table, including their quantity
         for (let item of cart) {
             await connection.execute(
                 'INSERT INTO ordered_items (Order_ID, Item_ID, Quantity) VALUES (?, ?, ?)',
