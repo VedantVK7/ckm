@@ -120,6 +120,12 @@ app.post('/place-order', async (req, res) => {
     }
 });
 
+// Route to serve the checkout page
+app.get('/checkout', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'checkout.html'));
+});
+
+
 // Starting the server
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
